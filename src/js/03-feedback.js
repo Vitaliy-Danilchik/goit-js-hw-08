@@ -8,7 +8,7 @@ const formData = {};
 
 function onFormData(e) {
   formData[e.target.name] = e.target.value;
-  localStorage.setItem('feedback-form-state', JSON.stringify(formData));
+  localStorage.setItem('feedback-form-state', JSON.stringify(formData)) || {};
 }
 
 function onSubmitForm(e) {
@@ -23,7 +23,7 @@ function onSubmitForm(e) {
   const email = document.querySelector('.feedback-form input');
   const message = document.querySelector('.feedback-form textarea');
   if (data) {
-    email.value = data.email;
-    message.value = data.message;
+    email.value = data.email || "";
+    message.value = data.message || "";
   }
 })();

@@ -12,4 +12,13 @@ function onPlay(evt) {
   localStorage.setItem('videoplayer-current-time', evt.seconds);
 }
 
-player.setCurrentTime(localStorage.getItem('videoplayer-current-time'));
+const time = localStorage.getItem('videoplayer-current-time');
+
+player.setCurrentTime(time).then(function (seconds) {
+  })
+  .catch(function (error) {
+    switch (error.name) {
+      case 'RangeError': break;
+       default: break;
+    }
+  });
