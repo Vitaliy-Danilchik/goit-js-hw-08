@@ -1,29 +1,48 @@
 import throttle from 'lodash.throttle';
 
-const form = document.querySelector('.feedback-form');
-form.addEventListener('input', throttle(onFormData, 500));
-form.addEventListener('submit', onSubmitForm);
+const feedbackForm = document.querySelector('.feedback-form');
+const emailInput = document.querySelector('input[name="email"]');
+const messageTextarea = document.querySelector('textarea[name="message"]');
 
-const formData = {};
+const ENTEREDDATA_KEY = 'feedback-form-state';
+const enteredData = {
+  email: '',
+  message: '',
+};
 
-function onFormData(e) {
-  formData[e.target.name] = e.target.value;
-  localStorage.setItem('feedback-form-state', JSON.stringify(formData)) || {};
+updatePage();
+
+feedbackForm.addEventListener('input', throttle(onInput, 500));
+feedbackForm.addEventListener('submit', onFormSubmit);
+
+function onInput() {
+  enteredData.email = emailInput.value;
+  enteredData.message = messageTextarea.value;
+
+  localStorage.setItem(ENTEREDDATA_KEY, JSON.stringify(enteredData));
 }
 
-function onSubmitForm(e) {
-  console.log(JSON.parse(localStorage.getItem('feedback-form-state')));
-  e.preventDefault();
-  e.currentTarget.reset();
-  localStorage.removeItem('feedback-form-state');
-}
+function onFormSubmit(event) {
+  event.preventDefault();
 
-(function dataFromLocalStorage() {
-  const data = JSON.parse(localStorage.getItem('feedback-form-state'));
-  const email = document.querySelector('.feedback-form input');
-  const message = document.querySelector('.feedback-form textarea');
-  if (data) {
-    email.value = data.email || "";
-    message.value = data.message || "";
+  if (enteredData.email && enteredData.message) {
+    console.log(enteredData);
+
+    event.currentTarget.reset();
+    localStorage.removeItem(ENTEREDDATA_KEY);
+    enteredData.email = '';
+    enteredData.message = '';
+  } else {
+    console.log('Fill in all fields of the form');
   }
-})();
+}
+
+function updatePage() {
+  const savedData = localStorage.getItem(ENTEREDDATA_KEY);
+
+  if (savedData) {
+    const { email, message } = JSON.parse(savedData);
+    emailInput.value = email;
+    messageTextarea.value = message;
+  }
+}
